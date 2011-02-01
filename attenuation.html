@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Attenuation Calculator - PJ Hoberman</title>
+		<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+		<script type="text/javascript">
+			function inputsFull()
+			{
+				var full = true;
+				$( 'input' ).each(function(){
+					if( $(this).val() == '' )
+						full = false;
+				}); // each
+				
+				return full;
+			} // inputsFull
+			
+			function roundbetter(n)
+			{
+				return Math.round(n*1000)/1000;
+			} // roundbetter
+			
+			function calc()
+			{
+				var og = parseFloat($( '#og' ).val()) - 1;
+				var current = parseFloat($( '#current' ).val()) - 1;
+				var current_orig = parseFloat($( '#current' ).val());
+				var current_atten = Math.round( ((og - current) / og )*100 );
+				var low = 1 - parseFloat($( '#low' ).val()) / 100;
+				var high = 1 - parseFloat($( '#high' ).val()) / 100;
+				
+				var tg_low = 1 + (roundbetter(og * high));
+				var tg_high = 1 + (roundbetter(og * low));
+				
+				var status = '';
+				if( current_orig >= tg_low && current_orig <= tg_high )
+					status = "It appears your yeast is in its full attenuation range.";
+					
+				else if( current_orig < tg_low )
+					status = "Your yeast worked its butt off. Let it sleep."
+					
+				else
+					status = "It appears your yeast has more work to do.";
+				
+				$( '#tg_low' ).text( tg_low );
+				$( '#tg_high' ).text( tg_high );
+				$( '#status' ).text( status );
+				$( '#current_atten' ).text( "Apparent attenuation is currently at " + current_atten + '%');
+			} // calc
+			
+			$(document).ready(function(){
+				$('input').change(function(){
+					if( inputsFull() )
+						calc();
+				});
+			});
+		</script>
+		
+		<style type="text/css">
+			#content {
+				width: 400px;
+				border: 1px solid black;
+				margin: 20px auto;
+				padding: 20px;
+				}
+				
+			.note {
+				font-style: italic;
+				font-size: 10px;
+				}
+				
+			label {
+				width: 150px;
+				text-align: right;
+				display: inline-block;
+				margin-right: 15px;
+				}
+				
+			input{
+				width: 50px;
+				margin-right: 5px;
+				}
+			
+			#status, #current_atten {
+				display: block;
+				height: 25px;
+				text-align: center;
+				margin-top: 5px;
+				}
+				
+		</style>
+	</head>
+	<body>
+		<div id="content">
+			
+			<p>
+				Enter the data for your batch, including Original Gravity (OG), the current reading, and the attenuation for your yeast.
+			</p>
+			<p>
+				If you don't know your yeast's attenuation rates:<br />
+				<a href="http://www.whitelabs.com/beer/homebrew_strains.html">White Labs Data</a> - <a href="http://www.wyeastlab.com/hb_yeaststrain.cfm">Wyeast Data</a>
+			</p>
+			<fieldset>
+				<label for="og">OG</label> <input id="og"/><span class="note">eg 1.061</span><br />
+				<label for="current">Current Reading</label> <input id="current" /><span class="note">eg 1.017</span><br />
+				<label for="low">Yeast atten low</label> <input id="low" /><span class="note">eg 65%</span><br />
+				<label for="high">Yeast atten high</label> <input id="high" /><span class="note">eg 75%</span><br />
+				<hr />
+				<label>TG range</label> <span id="tg_low"></span> - <span id="tg_high"></span><br />
+				<span id="status"></span>
+				<span id="current_atten"></span>
+				<button>Click me to run the magical maths.</button>
+			</fieldset>
+			
+			<p>Other tools: <a href="volume_adjustment.html">Volume Adjustment</a></p>
+		</div>
+		
+		<script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-3773955-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+	</body>
+</html>
